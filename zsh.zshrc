@@ -1,7 +1,24 @@
-#=============================================================================#
+#============================================================================#
 # zsh confuguration
 # Created by Konstantin Shulgin <konstantin.shulgin@gmail.com>
-#=============================================================================#
+#============================================================================#
+
+
+#----------------------------------------------------------------------------#
+# utily functions
+#----------------------------------------------------------------------------#
+
+# check is application exists via 'witch' utility
+function provided_in_env()
+{
+    local bin=$1
+
+    if which $bin > /dev/null 2>&1; then
+	return 0
+    fi
+
+    return 1
+}
 
 
 #----------------------------------------------------------------------------#
@@ -119,16 +136,15 @@ PROMPT='%F{yellow}%n@%m%f:%F{cyan}%~%F{magenta}$(__git_ps1 "(%s)")%F{green}$%f '
 #----------------------------------------------------------------------------#
 
 local dircolors_bin=""
+for itr in 'dircolors' 'gdircolors'
+do
+    if (provided_in_env $itr); then
+	dircolors_bin=$itr
+	break
+    fi
+done
 
-if which dircolors > /dev/null 2>&1; then
-    dircolors_bin='dircolors'
-fi
-
-if which gdircolors > /dev/null 2>&1; then
-    dircolors_bin='gdircolors'
-fi
-
-if [ "$dircolors_bin" != "" ]; then
+if [[ "$dircolors_bin" != "" ]]; then
     eval $($dircolors_bin ~/.zsh/dir_colors)
 fi
 
@@ -137,15 +153,30 @@ fi
 # Aliases
 #----------------------------------------------------------------------------#
 
-local OS_NAME=`uname -s`
-if [ "$OS_NAME"="Linux" ]; then
+local platform=`uname`
+if [[ "$platform" == "Linux" ]]; then
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
     alias ls='ls --color=auto'
     alias dir='dir --color=auto'
-else
-    export LS_OPTIONS='--color=auto'
+else if [[ "$platform" == "Darwin" ]]
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+
+    if (provided_in_env 'gls'); then
+        # gls provids by coreutils from macports
+	alias ls='gls --color=auto'
+    else
+	# gls doesn't exists, use BSD version
+	alias ls='ls -G'
+    fi
+
+    if (provided_in_env 'gdir'); then
+        # gls provids by coreutils from macports
+	alias dir='gdir --color=auto'
+    fi
 fi
 
 # lists
