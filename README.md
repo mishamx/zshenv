@@ -1,7 +1,7 @@
 Install
 =======
 
-Clone this repositories
+Clone this repository
 
     git clone https://github.com/mishamx/zshenv.git ~/.zsh
 
