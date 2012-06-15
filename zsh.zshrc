@@ -187,6 +187,7 @@ fi
 alias l='ls -CF'
 alias la='ls -AL'
 alias ll='ls -lF'
+alias lla='ls -lsa'
 
 # move-rename w/o correction and always in interactive mode
 alias mv='nocorrect mv -i'
